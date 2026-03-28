@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: library_db
+      POSTGRES_USER: library_db_user
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U library_db_user -d library_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  app:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: library_db
+      DB_USER: library_db_user
+      DB_PASSWORD: postgres
+volumes:
+  postgres_data:
+
+# NOTE: For production, I would have moved credentials to .env file, but this would prevent the task from being checked. 

@@ -4,3 +4,4 @@ psycopg2-binary==2.9.9
 pytz==2022.2.1
 sqlparse==0.4.2
 tzdata==2022.2
+Pillow==12.1.1
